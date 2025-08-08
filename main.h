@@ -3,51 +3,45 @@
 #include <string.h>
 #include "color_structs.h"
 
-
-#define MS	100
+#define MS      100
 #define getTick() LPC_TMR32B0->TC
 
 #define BUFFLEN 256
 
-
 typedef enum {
     RENDER_STANDARD = 0,   // existing patternColor mode
-    RENDER_CUBIC,          // cubic Bézier gradient mode
-    RENDER_BICUBIC         // bicubic Bézier gradient mode
+    RENDER_CUBIC,          // cubic Bzier gradient mode
+    RENDER_BICUBIC         // bicubic Bzier gradient mode
 } RenderMode;
 
-
-
 struct PatternColor{
-	uint8_t span;
-	uint8_t r;
-	uint8_t g;
-	uint8_t b;
+        uint8_t span;
+        uint8_t r;
+        uint8_t g;
+        uint8_t b;
 };
 
 struct Segment{
-	uint8_t span;
-	uint8_t ledCount;
-	int speed;
-	int timing;
-	int animCount;
-	uint16_t segmentStart;
-	uint16_t segmentEnd;
-	struct PatternColor patternColor[4];
-	 RenderMode renderMode;              // NEW: mode of rendering for this segment
-    struct CubicGradient cubicGradient; // NEW: parameters for cubic Bézier gradient
-    struct BiCubicGradient biCubicGradient; // NEW: parameters for bicubic Bézier gradient
-	
+        uint8_t span;
+        uint8_t ledCount;
+        int speed;
+        int timing;
+        int animCount;
+        uint16_t segmentStart;
+        uint16_t segmentEnd;
+        struct PatternColor patternColor[4];
+        RenderMode renderMode;              // mode of rendering for this segment
+    struct CubicGradient cubicGradient;     // parameters for cubic Bzier gradient
+    struct BiCubicGradient biCubicGradient; // parameters for bicubic Bzier gradient
 };
 
-typedef union{
-	struct Segment segment[4];
-	uint8_t bytes[sizeof(struct Segment) * 4];
-}sType;
+typedef struct{
+        struct Segment segment[4];
+        struct GradientSection gradient[3];
+        uint16_t bezierSpeed;
+} sType;
 
-extern sType s; 
-
-															
+extern sType s;
 
 void UART_IRQHandler(void);
 

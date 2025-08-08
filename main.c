@@ -164,6 +164,7 @@ int main(void){
 			{
 				secCount = 0;				
 			}
+                        createBezier();
 			segmentsRender();
 		}
 	}
