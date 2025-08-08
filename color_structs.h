@@ -37,8 +37,13 @@ struct BiCubicGradient{
 	struct Color s3;
 	uint16_t u0;
 	uint16_t u1;
-	uint16_t v0;
-	uint16_t v1;
+        uint16_t v0;
+        uint16_t v1;
+};
+
+struct GradientSection{
+        uint16_t span;
+        struct BiCubicGradient gradient;
 };
 
 #endif

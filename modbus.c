@@ -61,14 +61,26 @@ void writeSingleRegister(void){
 		
 	sh2b.b[1] = rxBuff[4];
 	sh2b.b[0] = rxBuff[5];
-	modbusRegisters[registerAddress] = sh2b.sh;
-	
-	switch(registerAddress){
-		case 11:
-			s.segment[0].span = modbusRegisters[11];
-			break;
-		case 12:
-			s.segment[1].span = modbusRegisters[12];
+        modbusRegisters[registerAddress] = sh2b.sh;
+
+        switch(registerAddress){
+                case 7:
+                        s.gradient[0].span = modbusRegisters[7];
+                        break;
+                case 8:
+                        s.gradient[1].span = modbusRegisters[8];
+                        break;
+                case 9:
+                        s.gradient[2].span = modbusRegisters[9];
+                        break;
+                case 10:
+                        s.bezierSpeed = modbusRegisters[10];
+                        break;
+                case 11:
+                        s.segment[0].span = modbusRegisters[11];
+                        break;
+                case 12:
+                        s.segment[1].span = modbusRegisters[12];
 			break;
 		case 13:
 			s.segment[2].span = modbusRegisters[13];
@@ -103,8 +115,8 @@ void writeMultipleRegisters(void){
 	
 	byteCount = rxBuff[6];
 	
-	j = 0;
-	for(i=0;i<registerCount;i++){
+        j = 0;
+        for(i=0;i<registerCount;i++){
 		
 		sh2b.b[1] = rxBuff[7 + j];
 		sh2b.b[0] = rxBuff[8 + j];
@@ -112,10 +124,19 @@ void writeMultipleRegisters(void){
 		
 		j = j + 2;
 		
-	}
-	
-	if((registerAddress + registerCount) >= 17 &&  modbusRegisters[17] <= 10)
-		dimm = modbusRegisters[17];
+        }
+
+        if(registerAddress <= 7 && (registerAddress + registerCount) > 7)
+                s.gradient[0].span = modbusRegisters[7];
+        if(registerAddress <= 8 && (registerAddress + registerCount) > 8)
+                s.gradient[1].span = modbusRegisters[8];
+        if(registerAddress <= 9 && (registerAddress + registerCount) > 9)
+                s.gradient[2].span = modbusRegisters[9];
+        if(registerAddress <= 10 && (registerAddress + registerCount) > 10)
+                s.bezierSpeed = modbusRegisters[10];
+
+        if((registerAddress + registerCount) >= 17 &&  modbusRegisters[17] <= 10)
+                dimm = modbusRegisters[17];
 	
 	if((registerAddress + registerCount) >= 18 &&  modbusRegisters[18] >20 && modbusRegisters[18] < 120)
 		ledCount = modbusRegisters[18];
@@ -243,6 +264,10 @@ void prepareModbusRegisters(void){
 	modbusRegisters[4] = 0x0001;					//Palette file version
 	modbusRegisters[5] = 0x05;						//Uart Speed 1:1200 2:4800 3:9600 4:19200 5:38400
 	modbusRegisters[6] = 0x3C;						//Device address 60
+        modbusRegisters[7] = s.gradient[0].span;
+        modbusRegisters[8] = s.gradient[1].span;
+        modbusRegisters[9] = s.gradient[2].span;
+        modbusRegisters[10] = s.bezierSpeed;
 	
 	modbusRegisters[11] = s.segment[0].span;
 	modbusRegisters[12] = s.segment[1].span;
